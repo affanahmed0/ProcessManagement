@@ -9,7 +9,7 @@ public class Simulator {
         ProcessManager processManager = new ProcessManager();
         List<Process> processes = new ArrayList<>();
         List<Process> readyQueue = new ArrayList<>(); // Ready Queue for processes
-        Statistics stats;
+        Statistics stats = null;    
 
         while (true) {
             System.out.println("\nSelect an option:");
@@ -73,45 +73,89 @@ public class Simulator {
                         System.out.println("Error saving random processes to file: " + e.getMessage());
                     }
                     break;
-                case 5:
-                    // Load processes from file if not already loaded
+
+                    case 5:
                     processes.clear();
                     try {
+                        // Load processes from file
                         processes = processManager.loadProcessesFromFile("processes.txt");
                         System.out.println("Processes loaded from file for scheduling.");
                     } catch (IOException e) {
                         System.out.println("Error loading processes from file: " + e.getMessage());
                     }
-
-                    // Add processes to Ready Queue
+                
+                    readyQueue.clear();
                     readyQueue.addAll(processes);
-                    // Sort the ready queue based on Arrival Time
+                
+                    // Sort readyQueue by arrival time for initial scheduling
                     Collections.sort(readyQueue, Comparator.comparingInt(Process::getArrivalTime));
-
-                    // Run the scheduler with the sorted ready queue
+                
+                    // Display scheduling algorithm menu
                     System.out.println("Choose Scheduling Algorithm:");
                     System.out.println("1. FCFS");
                     System.out.println("2. Round Robin");
+                    System.out.println("3. Priority");
+                    System.out.println("4. Shortest Job First (SJF)");
+                    System.out.println("5. Shortest Remaining Time (SRT)");
+                
                     int algorithmChoice = getValidInput(scanner);
-                    if (algorithmChoice == 1) {
-                        scheduler.fcfs(readyQueue);
-                    } else if (algorithmChoice == 2) {
-                        System.out.print("Enter Time Quantum: ");
-                        int timeQuantum = getValidInput(scanner);
-                        scheduler.roundRobin(readyQueue, timeQuantum);
-                    } else {
-                        System.out.println("Invalid choice. Returning to main menu.");
-                        continue;
+                    String ganttChart = ""; // Initialize Gantt chart string
+                
+                    switch (algorithmChoice) {
+                        case 1: // FCFS Scheduling
+                            ganttChart = scheduler.fcfs(readyQueue);
+                            break;
+                
+                        case 2: // Round Robin Scheduling
+                            System.out.print("Enter Time Quantum: ");
+                            int timeQuantum = getValidInput(scanner);
+                            ganttChart = scheduler.roundRobin(readyQueue, timeQuantum);
+                            break;
+                
+                        case 3: // Priority Scheduling
+                            System.out.print("Choose Priority Type (1 for Preemptive, 2 for Non-Preemptive): ");
+                            int priorityType = getValidInput(scanner);
+                            if (priorityType == 1) {
+                                ganttChart = scheduler.priorityScheduling(readyQueue);
+                            } else if (priorityType == 2) {
+                                ganttChart = scheduler.priorityScheduling(readyQueue);
+                            } else {
+                                System.out.println("Invalid priority type. Returning to main menu.");
+                                continue;
+                            }
+                            break;
+                
+                        case 4: // Shortest Job First (SJF) Scheduling
+                            System.out.print("Shortest Job First(SJF) Scheduling... ");
+                            ganttChart = scheduler.shortestJobFirst(readyQueue); // true for Preemptive, false for Non-Preemptive
+                            break;
+                
+                        case 5: // Shortest Remaining Time (SRT) Scheduling
+                            ganttChart = scheduler.shortestRemainingTime(readyQueue);
+                            break;
+                
+                        default:
+                            System.out.println("Invalid choice. Returning to main menu.");
+                            continue;
                     }
-                    stats = new Statistics(readyQueue);
+                
+                    // Generate and display statistics for the selected scheduling algorithm
+                    stats = new Statistics(readyQueue, ganttChart);
                     System.out.println("Scheduling completed. View statistics now or return to main menu.");
                     break;
+                
+
+
+                
+                
                 case 6:
-                    stats = new Statistics(readyQueue);
-                    System.out.println("Average Waiting Time: " + stats.calculateAverageWaitingTime());
-                    System.out.println("Average Turnaround Time: " + stats.calculateAverageTurnaroundTime());
-                    System.out.println("Average Completion Time: " + stats.calculateAverageCompletionTime());
+                    if (stats == null) {
+                    System.out.println("No statistics available. Please run a scheduling algorithm first.");
+                } else {
+                    stats.displayStatistics();
+                }
                     break;
+
                 case 7:
                     System.out.println("Exiting the program...");
                     System.exit(0);

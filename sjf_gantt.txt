@@ -1,0 +1,4 @@
+Process Scheduling Result with Gantt Chart:
+Gantt Chart: | Idle | Idle | Idle | Idle | Idle | Idle | Idle | Idle | Idle | Idle | Idle | Idle | Idle | Idle | P11 | P17 | P5 | P3 | P6 | P10 | P19 | P9 | P1 | P13 | P18 | P2 | P14 | P20 | P15 | P12 | P16 | P4 | P8 | P7 |
+
+Process Details:

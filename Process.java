@@ -2,6 +2,7 @@ public class Process {
     private int pid; // Process ID
     private int arrivalTime;
     private int burstTime;
+    private int remainingBurstTime;
     private int remainingTime; // For algorithms like Round Robin
     private int priority;
     private int waitingTime;
@@ -40,6 +41,14 @@ public class Process {
 
     public void setBurstTime(int burstTime) {
         this.burstTime = burstTime;
+    }
+
+    public int getRemainingBurstTime() {
+        return remainingBurstTime;
+    }
+
+    public void setRemainingBurstTime(int remainingBurstTime) {
+        this.remainingBurstTime = remainingBurstTime;
     }
 
     public int getRemainingTime() {
